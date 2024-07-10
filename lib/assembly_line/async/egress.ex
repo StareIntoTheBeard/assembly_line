@@ -1,4 +1,3 @@
-
 defmodule AssemblyLine.Async.Egress do
   use GenStage
 
@@ -12,7 +11,7 @@ defmodule AssemblyLine.Async.Egress do
 
   def handle_events(events, _from, state) do
     # finishes with stuff?
-    IO.inspect events
+    IO.inspect(events)
     {:noreply, [], state}
   end
 end

@@ -75,14 +75,13 @@ defmodule AssemblyLine.Manager do
     acc_event = acc_event.step.module.before_step(acc_event)
 
     acc_event =
-    AssemblyLine.set_remote_thread(acc_event)
-    |> AssemblyLine.set_prerun_context()
-    |> AssemblyLine.update_internal_thread()
+      AssemblyLine.set_remote_thread(acc_event)
+      |> AssemblyLine.set_prerun_context()
+      |> AssemblyLine.update_internal_thread()
 
     resp =
       acc_event
       |> step.adapter.run()
-
 
     case resp do
       {:ok, map, acc_event} ->

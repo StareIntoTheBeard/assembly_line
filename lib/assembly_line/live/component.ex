@@ -7,6 +7,7 @@ defmodule AssemblyLine.Live.Component do
           {__MODULE__, component_id},
           parameters
         )
+
         event
       end
     end

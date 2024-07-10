@@ -2,7 +2,6 @@ defmodule AssemblyLine.ArbitraryPipeline do
   defmacro __using__(_opts) do
     quote do
       use AssemblyLine.Manager
-
     end
   end
 end
@@ -22,4 +21,3 @@ defmodule AssemblyLine.ArbitraryStep do
     end
   end
 end
-

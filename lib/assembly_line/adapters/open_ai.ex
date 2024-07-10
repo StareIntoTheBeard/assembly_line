@@ -15,7 +15,8 @@ defmodule AssemblyLine.Adapters.OpenAI do
         model: event.step.module.model,
         response_format: %{type: event.step.module.response_format},
         messages: [wrap(event, "user", message)]
-      ) |> IO.inspect
+      )
+      |> IO.inspect()
 
     {:ok, resp, event}
   end

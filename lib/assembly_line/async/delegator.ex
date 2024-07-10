@@ -10,10 +10,12 @@ defmodule AssemblyLine.Async.Delegator do
   end
 
   def handle_events(events, _from, state) do
-    events = Enum.map(events, fn {step, event} ->
-      Task.start_link(fn () ->
-         AssemblyLine.Manager.runner(step, event) end)
-     end )
+    events =
+      Enum.map(events, fn {step, event} ->
+        Task.start_link(fn ->
+          AssemblyLine.Manager.runner(step, event)
+        end)
+      end)
 
     {:noreply, events, state}
   end

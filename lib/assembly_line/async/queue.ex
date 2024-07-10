@@ -18,6 +18,7 @@ defmodule AssemblyLine.Async.Queue do
   end
 
   def handle_call({:notify, {step, event}}, _from, state) do
-    {:reply, :ok, [{step, event}], state} # Dispatch immediately
+    # Dispatch immediately
+    {:reply, :ok, [{step, event}], state}
   end
 end

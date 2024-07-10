@@ -16,16 +16,18 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant do
   # def run({event, messages}) do
   def run(event) do
     openai_client = AssemblyLine.Adapters.OpenAIAssistant.Client.new()
+
     message =
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
     # Enum.map(event.context, fn message ->
-      openai_client
-      |> Threads.Messages.create(
-        AssemblyLine.get_remote_thread(event),
-        wrap(event, "user", message)
-      )
+    openai_client
+    |> Threads.Messages.create(
+      AssemblyLine.get_remote_thread(event),
+      wrap(event, "user", message)
+    )
+
     # end)
 
     # jbean todo get this out of routing
@@ -35,11 +37,13 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant do
         assistant_id: event.step.routing.assistant_id,
         response_format: event.step.module.response_format
       )
-      IO.inspect "run>"
-      res =
+
+    IO.inspect("run>")
+
+    res =
       openai_client
       |> Threads.Runs.create(run_req)
-      |> IO.inspect
+      |> IO.inspect()
 
     {:ok, res, event}
   end

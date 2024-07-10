@@ -73,7 +73,7 @@ defmodule AssemblyLine.Step do
     end
   end
 
-  def set_is_arbitrary?(%AssemblyLine.Step{} = step, true)  do
+  def set_is_arbitrary?(%AssemblyLine.Step{} = step, true) do
     put_in(step, [:_private, :is_arbitrary?], true)
   end
 

@@ -34,8 +34,8 @@ defmodule AssemblyLine do
 
   def update_context(%AssemblyLine.Event{} = event, context_element)
       when is_map(context_element) do
-    Framework.Mongo.init()
-    |> Framework.Mongo.insert_conversation(%{message: context_element, event: event})
+    NoSQL.Mongo.init()
+    |> NoSQL.Mongo.insert_conversation(%{message: context_element, event: event})
 
     Map.put(event, :context, [context_element] ++ event.context)
   end
@@ -77,7 +77,12 @@ defmodule AssemblyLine do
     put_in(event, [:_private, :internal_thread_id], UUID.uuid1())
   end
 
-  def set_internal_thread(%AssemblyLine.Event{} = event, id) do
+  def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event)
+      when not is_nil(id) do
+    event
+  end
+
+  def reset_internal_thread(%AssemblyLine.Event{} = event, id) do
     put_in(event, [:_private, :internal_thread_id], id)
   end
 
@@ -93,7 +98,7 @@ defmodule AssemblyLine do
     get_in(event, [:_private, :caller_pid])
   end
 
-  def set_is_arbitrary?(%AssemblyLine.Event{} = event, true)  do
+  def set_is_arbitrary?(%AssemblyLine.Event{} = event, true) do
     put_in(event, [:_private, :is_arbitrary?], true)
   end
 
@@ -113,7 +118,7 @@ defmodule AssemblyLine do
     do: Map.put(event, :response, response)
 
   def get_response(%AssemblyLine.Event{} = event) do
-    %{"content" => response} = Framework.Mongo.find_last_response(event)
+    %{"content" => response} = NoSQL.Mongo.find_last_response(event)
     response
   end
 
