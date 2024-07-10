@@ -101,7 +101,7 @@ defmodule AssemblyLine.Manager do
         {:halt, :error}
 
       other_result ->
-        IO.error("Unexpected Result - Got back: #{other_result}")
+        IO.warn("Unexpected Result - Got back: #{other_result}")
         {:halt, :error}
     end
   end

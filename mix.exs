@@ -32,7 +32,8 @@ defmodule AssemblyLine.MixProject do
       {:ex_aws_s3, "~> 2.5"},
       {:gen_stage, "~> 1.2"},
       {:accessible, "~> 0.3.0"},
-      {:uuid, "~> 1.1"}
+      {:uuid, "~> 1.1"},
+      {:nosql, path: "../nosql_utils"}
     ]
   end
 end
