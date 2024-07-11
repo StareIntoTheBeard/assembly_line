@@ -5,8 +5,9 @@ defmodule AssemblyLine.Manager do
   defmacro __using__(_opts) do
     quote do
       def execute(%AssemblyLine.Event{} = event) do
+        event = %{event | assembly_line: __MODULE__}
         step_list = AssemblyLine.get_step_list(event)
-        event = %{event | step_list: step_list, assembly_line: __MODULE__}
+        event = %{event | step_list: step_list}
 
         AssemblyLine.Manager.event_check(event)
 

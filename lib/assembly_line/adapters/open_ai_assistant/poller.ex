@@ -23,4 +23,8 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant.Poller do
   defp poll([], event) do
     run(event)
   end
+
+  defp poll(response, _event) do
+    response
+  end
 end
