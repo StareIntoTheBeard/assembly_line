@@ -37,8 +37,9 @@ end
 * Job monitoring
 * Query management
 * Job queues/restarts
+* Custom models
+* Additional vendor models support
 * Alternate models on a restarted job
-* Additional models support
 * Ability to select training method
 * Ability to review/alter tagging
 * Other data connectors
