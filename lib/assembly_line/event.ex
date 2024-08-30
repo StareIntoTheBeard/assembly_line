@@ -19,31 +19,3 @@ defmodule AssemblyLine.Event do
     break_word: "AI HALT REQUESTED"
   ]
 end
-
-# defmodule AssemblyLine.Step do
-#   defstruct [
-#     :adapter,
-#     :module,
-#     mapping: %AssemblyLine.FoundationModel{}
-#   ]
-# end
-
-# %AssemblyLine.Event{
-#   assembly_line: SomeAssemblyPipeline,
-#   step: %AssemblyLine.Step{
-#     adapter: AssemblyLine.Adapters.OpenAI,
-#     module: SomeStep,
-#     mapping: %AssemblyLine.FoundationModel{model: "openai-4-gpt-whatever"}
-#   }
-
-# }
-
-# %AssemblyLine.Event{
-#   assembly_line: SomeAssemblyPipeline,
-#   step: %AssemblyLine.Step{
-#     adapter: AssemblyLine.Adapters.OpenAI,
-#     step: SomeStep,
-#     mapping: %AssemblyLine.FoundationModel{model: "openai-4-gpt-whatever"}
-#   }
-
-# }
