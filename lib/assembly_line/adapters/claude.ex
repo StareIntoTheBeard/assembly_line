@@ -6,23 +6,32 @@ defmodule AssemblyLine.Adapters.Claude do
   ]
 
   def run(event) do
+    api_key = Application.get_env(:assembly_line, :claude_api_key, nil)
+
     message =
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
-    {:ok, stream} = Anthropix.chat(client, [
-      model: "claude-3-opus-20240229",
-      messages: messages,
-      stream: true,
-    ])
+    client = Anthropix.init(api_key)
 
-    stream
-    |> Stream.each(&update_ui_with_chunk/1)
-    |> Stream.run()
+    {:ok, resp} =
+      Anthropix.chat(client,
+        # model: "claude-3-opus-20240229",
+        model: event.step.module.model,
+        messages: [wrap(event, "user", message)]
+        # stream: true,
+      )
+
+    # stream
+    # |> Stream.each(&update_ui_with_chunk/1)
+    # |> Stream.run()
+    {:ok, resp, event}
   end
 
-  def deserialize(_event, %{"completions" => completions}) do
-    Enum.map(completions, fn completion -> get_in(completion, ["data", "text"]) end)
+  def deserialize(_event, %{"content" => completions}) do
+    Enum.map(completions, fn completion -> get_in(completion, ["text"]) end)
+    |> Enum.join("\n")
+    |> IO.inspect()
   end
 
   def wrap(%AssemblyLine.Event{} = _event, role, message),
