@@ -22,9 +22,7 @@ defmodule AssemblyLine.Adapters.Claude do
         # stream: true,
       )
 
-    # stream
-    # |> Stream.each(&update_ui_with_chunk/1)
-    # |> Stream.run()
+
     {:ok, resp, event}
   end
 
