@@ -6,13 +6,19 @@ defmodule AssemblyLine.Adapters.Claude do
   ]
 
   def run(event) do
+    IO.inspect "EVENT"
+    IO.inspect event
+    IO.inspect "CLAUDE LOGGING!"
+    IO.inspect "CLAUDE API!"
     api_key = Application.get_env(:assembly_line, :claude_api_key, nil)
+    |> IO.inspect
 
     message =
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
     client = Anthropix.init(api_key)
+    |> IO.inspect
 
     {:ok, resp} =
       Anthropix.chat(client,
@@ -20,7 +26,7 @@ defmodule AssemblyLine.Adapters.Claude do
         model: event.step.module.model,
         messages: [wrap(event, "user", message)]
         # stream: true,
-      )
+      ) |> IO.inspect
 
 
     {:ok, resp, event}
