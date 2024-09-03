@@ -11,14 +11,12 @@ defmodule AssemblyLine.Adapters.Claude do
     IO.inspect "CLAUDE LOGGING!"
     IO.inspect "CLAUDE API!"
     api_key = Application.get_env(:assembly_line, :claude_api_key, nil)
-    |> IO.inspect
 
     message =
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
     client = Anthropix.init(api_key)
-    |> IO.inspect
 
     {:ok, resp} =
       Anthropix.chat(client,
@@ -35,7 +33,6 @@ defmodule AssemblyLine.Adapters.Claude do
   def deserialize(_event, %{"content" => completions}) do
     Enum.map(completions, fn completion -> get_in(completion, ["text"]) end)
     |> Enum.join("\n")
-    |> IO.inspect()
   end
 
   def wrap(%AssemblyLine.Event{} = _event, role, message),
