@@ -6,10 +6,6 @@ defmodule AssemblyLine.Adapters.Claude do
   ]
 
   def run(event) do
-    IO.inspect "EVENT"
-    IO.inspect event
-    IO.inspect "CLAUDE LOGGING!"
-    IO.inspect "CLAUDE API!"
     api_key = Application.get_env(:assembly_line, :claude_api_key, nil)
 
     message =
