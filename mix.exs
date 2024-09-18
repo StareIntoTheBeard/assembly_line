@@ -26,8 +26,8 @@ defmodule AssemblyLine.MixProject do
   defp deps do
     [
       {:openai, "~> 0.5.4"},
-      {:openai_ex, git: "https://github.com/Subatomic-Agency/openai_ex.git", ref: "460d599a4741b87fac503b5b42762963d1ccf25f"},
-      {:ex_aws, git: "https://github.com/Subatomic-Agency/ex_aws.git", override: true},
+      {:openai_ex, git: "https://github.com/microdose-ai-team/openai_ex.git"},
+      {:ex_aws, git: "https://github.com/microdose-ai-team/ex_aws.git", override: true},
       {:ex_aws_bedrock, "~> 2.5.1"},
       {:ex_aws_s3, "~> 2.5"},
       {:gen_stage, "~> 1.2"},
