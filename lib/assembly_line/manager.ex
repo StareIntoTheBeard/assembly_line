@@ -61,7 +61,6 @@ defmodule AssemblyLine.Manager do
 
   def run(step, event) when is_atom(step) do
     step = step.init()
-    |> IO.inspect
     runner(step, event)
   end
 

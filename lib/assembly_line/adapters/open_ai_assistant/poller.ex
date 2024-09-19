@@ -5,7 +5,7 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant.Poller do
     Process.sleep(5000)
     thread_id = AssemblyLine.get_remote_thread(event)
 
-    response =
+    {:ok, response} =
       openai_client |> OpenaiEx.Beta.Threads.Messages.list(thread_id)
 
     Map.get(response, "data")
