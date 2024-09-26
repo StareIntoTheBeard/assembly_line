@@ -14,6 +14,7 @@ defmodule AssemblyLine.Adapters.DallE do
     img_req = OpenaiEx.Images.Generate.new(prompt: message, model: event.step.module.model, size: event.step.routing.size, n: event.assigns.amount)
 
     {:ok, response} =  AssemblyLine.Adapters.OpenAIAssistant.Client.new()
+    |> OpenaiEx.with_receive_timeout(99999)
     |> OpenaiEx.Images.generate(img_req)
 
     {:ok, response, event}
