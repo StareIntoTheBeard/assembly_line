@@ -10,7 +10,7 @@ defmodule AssemblyLine.Adapters.DallE do
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
-    img_req = OpenaiEx.Images.Generate.new(prompt: message, size: "256x256", n: event.assigns.amount)
+    img_req = OpenaiEx.Images.Generate.new(prompt: message, size: "1792x1024", n: event.assigns.amount)
 
     {:ok, response} =  AssemblyLine.Adapters.OpenAIAssistant.Client.new()
     |> OpenaiEx.Images.generate(img_req)

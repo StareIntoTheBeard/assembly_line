@@ -38,8 +38,6 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant do
         response_format: event.step.module.response_format
       )
 
-    IO.inspect("run>")
-
     res =
       openai_client
       |> Threads.Runs.create(run_req)
