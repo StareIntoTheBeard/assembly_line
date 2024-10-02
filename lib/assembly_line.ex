@@ -73,12 +73,14 @@ defmodule AssemblyLine do
     get_in(event, [:_private, :remote_thread_id])
   end
 
-  def set_internal_thread(%AssemblyLine.Event{} = event) do
-    put_in(event, [:_private, :internal_thread_id], UUID.uuid1())
+  def set_internal_thread(event, uuid \\ UUID.uuid1())
+
+  def set_internal_thread(%AssemblyLine.Event{} = event, uuid) do
+    put_in(event, [:_private, :internal_thread_id], uuid)
   end
 
-  def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event)
-      when not is_nil(id) do
+  def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event, uuid)
+  when not is_nil(id) do
     event
   end
 
@@ -121,14 +123,6 @@ defmodule AssemblyLine do
     %{"content" => response} = NoSQL.Mongo.find_last_response(event)
     response
   end
-
-  # defp parse_response({key, value}) do
-  #   key == :role && value == "assistant"
-  # end
-
-  # defp parse_response(%{role: role, content: _}) do
-  #   role == "assistant"
-  # end
 
   def get_next_user_prompt(%AssemblyLine.Event{context: context}) do
     context

@@ -7,6 +7,7 @@ defmodule AssemblyLine.Manager do
       def execute(%AssemblyLine.Event{} = event) do
         event = %{event | assembly_line: __MODULE__}
         step_list = AssemblyLine.get_step_list(event)
+
         event = %{event | step_list: step_list}
 
         AssemblyLine.Manager.event_check(event)
@@ -76,7 +77,7 @@ defmodule AssemblyLine.Manager do
     acc_event = acc_event.step.module.before_step(acc_event)
 
     acc_event =
-      AssemblyLine.set_remote_thread(acc_event)
+      AssemblyLine.update_remote_thread(acc_event)
       |> AssemblyLine.set_prerun_context()
       |> AssemblyLine.update_internal_thread()
 
