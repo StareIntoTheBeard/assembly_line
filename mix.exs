@@ -35,7 +35,7 @@ defmodule AssemblyLine.MixProject do
       {:anthropix, "~> 0.3"},
       {:uuid, "~> 1.1"},
       {:horde, "~> 0.9.0"},
-      {:nosql, git: "git@github.com:microdose-ai-team/nosql_utils.git", ref: "b8831c17ac8fa86aab410f4c91748db1c7b12a32"}
+      {:nosql, git: "git@github.com:microdose-ai-team/nosql_utils.git", ref: "ba07519e2291437d6ab05da6438bc2f79a624836"}
       # {:nosql, path: "../nosql_utils"}
     ]
   end
