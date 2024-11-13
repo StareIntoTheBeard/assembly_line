@@ -27,5 +27,3 @@ defmodule AssemblyLine.Adapters.DallE do
   def wrap(%AssemblyLine.Event{} = _event, role, message), do: %{role: role, content: message}
 end
 
-
-alias OpenaiEx.Images

@@ -19,7 +19,7 @@ defmodule AssemblyLine.Adapters.Claude do
         model: event.step.module.model,
         messages: [wrap(event, "user", message)]
         # stream: true,
-      ) |> IO.inspect
+      )
 
 
     {:ok, resp, event}
