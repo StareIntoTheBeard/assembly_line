@@ -77,7 +77,7 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant do
     {:ok, thread} =
       AssemblyLine.Adapters.OpenAIAssistant.Client.new()
       |> OpenaiEx.Beta.Threads.create()
-      |> IO.inspect
+      |> IO.inspect()
 
     thread["id"]
   end

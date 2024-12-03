@@ -21,7 +21,6 @@ defmodule AssemblyLine.Adapters.Claude do
         # stream: true,
       )
 
-
     {:ok, resp, event}
   end
 

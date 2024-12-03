@@ -17,7 +17,7 @@ defmodule AssemblyLine.Adapters.LLaMa do
       "top_p" => 1
     })
     |> ExAws.request!(service_override: :bedrock, region: "us-west-2")
-    |> IO.inspect
+    |> IO.inspect()
   end
 
   def deserialize(_event, %{"generation" => completions}) do

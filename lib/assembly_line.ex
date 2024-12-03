@@ -80,7 +80,7 @@ defmodule AssemblyLine do
   end
 
   def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event, uuid)
-  when not is_nil(id) do
+      when not is_nil(id) do
     event
   end
 
