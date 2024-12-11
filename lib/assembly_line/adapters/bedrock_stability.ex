@@ -10,10 +10,12 @@ defmodule AssemblyLine.Adapters.BedrockStability do
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
-    ExAws.Bedrock.invoke_model(event.step.module.model, %{
+    response = ExAws.Bedrock.invoke_model(event.step.module.model, %{
       "prompt" => message
     })
     |> ExAws.request!(service_override: :bedrock, region: "us-west-2")
+
+    {:ok, response, event}
   end
 
   def deserialize(_event, %{"images" => [image]}) do
@@ -27,6 +29,10 @@ defmodule AssemblyLine.Adapters.BedrockStability do
     |> ExAws.S3.upload("stability-temp-images", filename)
     |> ExAws.request!()
     |> get_in([:body, :location])
+
+    url = S3.File.get_url(%{filename: filename, s3_bucket: "stability-temp-images"})
+
+    [url]
   end
 
   def wrap(%AssemblyLine.Event{} = _event, role, message),
