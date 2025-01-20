@@ -11,7 +11,8 @@ defmodule AssemblyLine.Adapters.BedrockStability do
       |> Map.get(:content)
 
     response = ExAws.Bedrock.invoke_model(event.step.module.model, %{
-      "prompt" => message
+      "prompt" => message,
+      "aspect_ratio" => "16:9"
     })
     |> ExAws.request!(service_override: :bedrock, region: "us-west-2")
 
