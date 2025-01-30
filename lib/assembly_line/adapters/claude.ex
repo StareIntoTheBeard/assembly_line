@@ -16,7 +16,7 @@ defmodule AssemblyLine.Adapters.Claude do
 
     {:ok, resp} =
       Anthropix.chat(client,
-        model: event.step.module.model,
+        model: event.step.module.model(),
         messages: [wrap(event, "user", message)]
         # stream: true,
       )

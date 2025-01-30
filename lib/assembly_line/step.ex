@@ -24,6 +24,8 @@ defmodule AssemblyLine.Step do
   defmacro __using__(_opts) do
     quote do
       @behaviour AssemblyLine.Step
+      use AssemblyLine.Assigner
+
       def init,
         do:
           struct(AssemblyLine.Step, %{
@@ -37,7 +39,22 @@ defmodule AssemblyLine.Step do
       end
 
       def prompt(%{step: %{module: step_module}} = event) do
-        step_module.prompt(event)
+        event.assigns
+        |> step_module.prompt()
+      end
+
+      def compile_prompt(event) do
+        debug = Map.has_key?(event.step.routing, :debug)
+
+        assigns = event.assigns
+        |> event.step.module.validate_assigns(debug)
+
+        prompt = assigns
+        |> prompt()
+        |> Phoenix.HTML.Safe.to_iodata()
+        |> IO.iodata_to_binary()
+        |> String.trim()
+        {prompt, assigns}
       end
 
       def dial_agent, do: {}
@@ -63,6 +80,14 @@ defmodule AssemblyLine.Step do
       def after_step(%AssemblyLine.Event{} = event), do: Function.identity(event)
       def on_failure(%AssemblyLine.Event{} = event), do: Function.identity(event)
 
+      def run_before_step(event) do
+        AssemblyLine.Step.step_guard(event, :before_step)
+      end
+
+      def run_after_step(event) do
+        AssemblyLine.Step.step_guard(event, :after_step)
+      end
+
       defoverridable response_format: 0,
                      model: 0,
                      prompt: 1,
@@ -72,6 +97,18 @@ defmodule AssemblyLine.Step do
                      before_step: 1
     end
   end
+
+  def step_guard(event, _) when is_map_key(event.step.routing, :debug) do
+    event
+  end
+
+  def step_guard(event, step_key) do
+    apply(event.step.module, step_key, [event])
+    |> step_return(event)
+  end
+
+  defp step_return(%AssemblyLine.Event{} = reply, _), do: reply
+  defp step_return(_, %AssemblyLine.Event{} = event), do: event
 
   def set_is_arbitrary?(%AssemblyLine.Step{} = step, true) do
     put_in(step, [:_private, :is_arbitrary?], true)

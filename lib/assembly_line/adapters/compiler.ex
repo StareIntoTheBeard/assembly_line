@@ -1,4 +1,4 @@
-defmodule AssemblyLine.Adapters.Debug do
+defmodule AssemblyLine.Adapters.Compiler do
   use AssemblyLine.Adapter
   @enforce_keys [:debug]
   defstruct [
@@ -6,16 +6,6 @@ defmodule AssemblyLine.Adapters.Debug do
   ]
 
   def run(event) do
-    message =
-      AssemblyLine.get_next_user_prompt(event)
-      |> Map.get(:content)
-
-    dbg("running debugger")
-    dbg("event")
-    dbg(event)
-    dbg("message")
-    dbg(message)
-
     {:ok,
      [
        "https://zvukipro.com/uploads/posts/2020-06/1593335700_30094-bears-nature-animals-grizzly_bear-grizzly_bears.jpg"
@@ -23,11 +13,6 @@ defmodule AssemblyLine.Adapters.Debug do
   end
 
   def deserialize(event, responses) do
-    dbg("Deserializing...")
-    dbg("deserializing - event")
-    dbg(event)
-    dbg("deserializing - responses")
-    dbg(responses)
     responses
   end
 

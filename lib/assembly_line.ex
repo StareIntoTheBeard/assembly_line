@@ -4,16 +4,20 @@ defmodule AssemblyLine do
   def init(:arbitrary_pipeline), do: init() |> AssemblyLine.set_is_arbitrary?(true)
 
   def set_prerun_context(%AssemblyLine.Event{_private: %{is_arbitrary?: true}} = event) do
-    message = event.step.module.adapter.wrap(event, "user", event.step.module.prompt(event))
+    {prompt, assigns} = event.step.module.compile_prompt(event)
+    
+    message = event.step.adapter.wrap(event, "user", prompt)
+    event = AssemblyLine.update_assigns(event, assigns)
     __MODULE__.update_context(event, message)
   end
 
   def set_prerun_context(%AssemblyLine.Event{} = event) do
-    prompt =
+    {prompt, assigns} =
       event
-      |> event.step.module.prompt()
-
-    message = event.step.module.adapter.wrap(event, "user", prompt)
+      |> event.step.module.compile_prompt()
+    
+    event = AssemblyLine.update_assigns(event, assigns)
+    message = event.step.adapter.wrap(event, "user", prompt)
     __MODULE__.update_context(event, message)
   end
 
@@ -34,8 +38,10 @@ defmodule AssemblyLine do
 
   def update_context(%AssemblyLine.Event{} = event, context_element)
       when is_map(context_element) do
+    if not Map.has_key?(event.step.routing, :debug) do
     NoSQL.Mongo.init()
     |> NoSQL.Mongo.insert_conversation(%{message: context_element, event: event})
+    end
 
     Map.put(event, :context, [context_element] ++ event.context)
   end

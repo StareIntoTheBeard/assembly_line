@@ -4,8 +4,25 @@ defmodule AssemblyLine.Manager do
   # ...I think this won't be a problem w/ the evented system....
   defmacro __using__(_opts) do
     quote do
-      def execute(%AssemblyLine.Event{} = event) do
+      def compile(%AssemblyLine.Event{} = event) do
         event = %{event | assembly_line: __MODULE__}
+        step_list = AssemblyLine.get_step_list(event)
+
+        event = %{event | step_list: step_list}
+
+        AssemblyLine.Manager.event_check(event)
+
+        event = __MODULE__.init(event)
+
+        event =
+          Enum.reduce_while(step_list, event, fn step, acc ->
+            AssemblyLine.Manager.run_compiler(step, acc)
+          end)
+      end
+
+      def execute(%AssemblyLine.Event{} = event) do
+        %{assigns: assigns} = compile(event)
+        event = %{event | assigns: assigns, assembly_line: __MODULE__}
         step_list = AssemblyLine.get_step_list(event)
 
         event = %{event | step_list: step_list}
@@ -65,7 +82,19 @@ defmodule AssemblyLine.Manager do
     runner(step, event)
   end
 
+  def run_compiler(step, event) when is_atom(step) do
+    step = %{
+      step.init()
+      | adapter: AssemblyLine.Adapters.Compiler,
+        routing: %AssemblyLine.Adapters.Compiler{debug: "debug"}
+    }
+
+    runner(step, event)
+  end
+
   def runner(%AssemblyLine.Step{module: module} = step, acc_event) when is_atom(module) do
+    dbg(step)
+
     acc_event = %{
       acc_event
       | step: step,
@@ -74,10 +103,10 @@ defmodule AssemblyLine.Manager do
         break_word: module.break_word()
     }
 
-    acc_event = acc_event.step.module.before_step(acc_event)
-
     acc_event =
-      AssemblyLine.update_remote_thread(acc_event)
+      acc_event
+      |> acc_event.step.module.run_before_step()
+      |> AssemblyLine.update_remote_thread()
       |> AssemblyLine.set_prerun_context()
       |> AssemblyLine.update_internal_thread()
 
@@ -86,8 +115,8 @@ defmodule AssemblyLine.Manager do
       |> step.adapter.run()
 
     case resp do
-      {:ok, map, acc_event} ->
-        message = step.adapter.deserialize(acc_event, map)
+      {:ok, reply, acc_event} ->
+        message = step.adapter.deserialize(acc_event, reply)
         AssemblyLine.Manager.circuit_break(acc_event, message)
 
       map when is_map(map) ->
@@ -99,7 +128,7 @@ defmodule AssemblyLine.Manager do
         AssemblyLine.Manager.circuit_break(acc_event, message)
 
       {:error, error, _acc} ->
-        IO.inspect(error)
+        dbg error
         {:halt, :error}
 
       other_result ->
@@ -116,13 +145,14 @@ defmodule AssemblyLine.Manager do
 
   def circuit_break(%AssemblyLine.Event{break_word: break_word} = event, message)
       when break_word != message do
-    wrapped_message = event.step.module.adapter.wrap(event, "assistant", message)
+    wrapped_message = event.step.adapter.wrap(event, "assistant", message)
 
     event =
       AssemblyLine.update_context(event, wrapped_message)
       |> AssemblyLine.set_response(wrapped_message)
 
-    event = event.step.module.after_step(event)
+    event = event.step.module.run_after_step(event)
+
     {:cont, event}
   end
 

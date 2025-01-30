@@ -35,7 +35,7 @@ defmodule AssemblyLine.Adapters.OpenAIAssistant do
       Threads.Runs.new(
         thread_id: AssemblyLine.get_remote_thread(event),
         assistant_id: event.step.routing.assistant_id,
-        response_format: event.step.module.response_format
+        response_format: event.step.module.response_format()
       )
 
     res =
