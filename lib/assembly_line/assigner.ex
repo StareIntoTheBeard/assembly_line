@@ -65,8 +65,8 @@ defmodule AssemblyLine.Assigner do
             Map.put(acc, name, nil)
           end)
 
-        Map.merge(default_prompt_outputs, assigns)
-        |> Map.merge(default_prompt_assigns)
+        Map.merge(default_prompt_outputs, default_prompt_assigns)
+        |> Map.merge(assigns)
       end
     end
   end
