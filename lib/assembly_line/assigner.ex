@@ -30,8 +30,9 @@ defmodule AssemblyLine.Assigner do
       # Validation function to ensure required assigns exist
       def validate_assigns(assigns, opts) do
         verbose = Keyword.get(opts, :verbose, false)
-        compiler = Keyword.get(opts, :compiler, false)
         if verbose, do: dbg(assigns)
+
+        compiler = Keyword.get(opts, :compiler, false)
 
         required_prompt_assigns =
           Enum.filter(@__prompt_assigns__, fn {_name, opts} ->

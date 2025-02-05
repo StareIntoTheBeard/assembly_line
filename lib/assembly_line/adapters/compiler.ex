@@ -1,7 +1,10 @@
 defmodule AssemblyLine.Adapters.Compiler do
   use AssemblyLine.Adapter
-  # @enforce_keys [:disable_step_hooks, :disable_conversation_recording, :verbose]
-  defstruct [:disable_step_hooks, :disable_conversation_recording, :compiler]
+
+  defstruct [compiler: true]
+
+  def opts(),
+    do: %{disable_step_hooks: true, disable_conversation_recording: true}
 
   def run(event) do
     {:ok, "compiled with assigns #{inspect(event.assigns)}", event}

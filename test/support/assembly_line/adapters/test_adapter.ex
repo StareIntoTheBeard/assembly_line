@@ -1,9 +1,7 @@
 defmodule AssemblyLine.Adapters.TestAdapter do
   use AssemblyLine.Adapter
 
-  defstruct [
-    :disable_conversation_recording
-  ]
+  def opts(), %{disable_conversation_recording: true}
 
   # implement call to model
   def run(_event) do

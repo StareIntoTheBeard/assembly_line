@@ -37,7 +37,7 @@ defmodule AssemblyLine do
   end
 
   def update_context(%AssemblyLine.Event{} = event, context_element)
-      when is_map_key(event.step.routing, :disable_conversation_recording) do
+      when is_map_key(event.step.opts, :disable_conversation_recording) do
     Map.put(event, :context, [context_element] ++ event.context)
   end
 

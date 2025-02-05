@@ -6,6 +6,7 @@ defmodule AssemblyLine.Step do
     :adapter,
     :routing,
     :prompt,
+    :opts,
     _private: %{is_arbitrary?: false}
   ]
 
@@ -17,6 +18,7 @@ defmodule AssemblyLine.Step do
   @callback on_failure(struct()) :: struct()
   @callback adapter() :: module()
   @callback route() :: map()
+  @callback opts() :: map()
 
   # todo do this right
   def exception(args), do: args
@@ -32,7 +34,8 @@ defmodule AssemblyLine.Step do
           struct(AssemblyLine.Step, %{
             adapter: adapter(),
             module: __MODULE__,
-            routing: adapter().init(route())
+            routing: adapter().init(route()),
+            opts: opts(),
           })
 
       def prompt(%{step: %{prompt: prompt}}) do
@@ -45,12 +48,12 @@ defmodule AssemblyLine.Step do
       end
 
       def compile_prompt(event) do
-        verbose = Map.has_key?(event.step.routing, :verbose)
+        verbose = Map.has_key?(event.step.opts(), :verbose)
         compiler = Map.has_key?(event.step.routing, :compiler)
 
         assigns =
           event.assigns
-          |> event.step.module.validate_assigns([verbose: verbose, compiler: compiler])
+          |> event.step.module.validate_assigns(verbose: verbose, compiler: compiler)
 
         prompt =
           assigns
@@ -66,6 +69,19 @@ defmodule AssemblyLine.Step do
       def response_format, do: "text"
       def adapter, do: AssemblyLine.PhoneBook.fetch_agent(__MODULE__.dial_agent()).adapter
       def route, do: AssemblyLine.PhoneBook.fetch_agent(__MODULE__.dial_agent()).route
+
+      def opts do
+        agent = AssemblyLine.PhoneBook.fetch_agent(__MODULE__.dial_agent())
+        opts_present? = Map.has_key?(agent, :opts)
+
+        case opts_present? do
+          true ->
+            Map.merge(agent.opts, __MODULE__.adapter().opts()) 
+
+          false ->
+            __MODULE__.adapter().opts()
+        end
+      end
 
       def model do
         route =
@@ -96,6 +112,7 @@ defmodule AssemblyLine.Step do
       defoverridable response_format: 0,
                      model: 0,
                      prompt: 1,
+                     opts: 0,
                      break_word: 0,
                      dial_agent: 0,
                      after_step: 1,
@@ -103,7 +120,7 @@ defmodule AssemblyLine.Step do
     end
   end
 
-  def step_guard(event, _) when is_map_key(event.step.routing, :disable_step_hooks) do
+  def step_guard(event, _) when is_map_key(event.step.opts, :disable_step_hooks) do
     event
   end
 

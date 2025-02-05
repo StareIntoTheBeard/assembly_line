@@ -18,8 +18,9 @@ defmodule AssemblyLine.Manager do
           Enum.reduce_while(step_list, event, fn step, acc ->
             AssemblyLine.Manager.run_compiler(step, acc)
           end)
-        verbose = Map.has_key?(event.step.routing, :verbose)
-        if verbose, do: dbg event
+
+        verbose = Map.has_key?(event.step.opts, :verbose) && event.step.opts.verbose
+        if verbose, do: dbg(event)
         event
       end
 
@@ -89,17 +90,15 @@ defmodule AssemblyLine.Manager do
     step = %{
       step.init()
       | adapter: AssemblyLine.Adapters.Compiler,
-        routing: %AssemblyLine.Adapters.Compiler{
-          disable_step_hooks: true,
-          disable_conversation_recording: true
-        }
+        routing: AssemblyLine.Adapters.Compiler.init(),
+        opts: AssemblyLine.Adapters.Compiler.opts()
     }
 
     runner(step, event)
   end
 
   def runner(%AssemblyLine.Step{module: module} = step, acc_event) when is_atom(module) do
-    if Map.has_key?(step.routing, :verbose), do: dbg(step)
+    if Map.has_key?(step.opts, :verbose) && step.opts.verbose, do: dbg(step)
 
     acc_event = %{
       acc_event
@@ -134,7 +133,7 @@ defmodule AssemblyLine.Manager do
         AssemblyLine.Manager.circuit_break(acc_event, message)
 
       {:error, error, _acc} ->
-        if Map.has_key?(step.routing, :verbose), do: dbg(error)
+        if Map.has_key?(step.opts, :verbose) and step.opts.verbose, do: dbg(error)
         {:halt, :error}
 
       other_result ->
