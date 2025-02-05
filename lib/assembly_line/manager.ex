@@ -18,6 +18,9 @@ defmodule AssemblyLine.Manager do
           Enum.reduce_while(step_list, event, fn step, acc ->
             AssemblyLine.Manager.run_compiler(step, acc)
           end)
+        verbose = Map.has_key?(event.step.routing, :verbose)
+        if verbose, do: dbg event
+        event
       end
 
       def execute(%AssemblyLine.Event{} = event) do

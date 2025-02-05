@@ -16,10 +16,7 @@ defmodule AssemblyLine.Adapters.Debug do
     dbg("message")
     dbg(message)
 
-    {:ok,
-     [
-       "https://zvukipro.com/uploads/posts/2020-06/1593335700_30094-bears-nature-animals-grizzly_bear-grizzly_bears.jpg"
-     ], event}
+    {:ok, "debug response", event}
   end
 
   def deserialize(event, responses) do
