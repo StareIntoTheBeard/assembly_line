@@ -33,6 +33,7 @@ defmodule AssemblyLine.MixProject do
       {:gen_stage, "~> 1.2"},
       {:accessible, "~> 0.3.0"},
       {:anthropix, "~> 0.3"},
+      {:dialyxir, "~> 1.4", runtime: false},
       {:uuid, "~> 1.1"},
       {:horde, "~> 0.9.0"},
       {:phoenix_live_view, "~> 1.0"},
