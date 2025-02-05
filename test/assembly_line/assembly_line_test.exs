@@ -32,4 +32,41 @@ defmodule AssemblyLineTest do
              ok: "more"
            }
   end
+
+  test "execute/1 for an event", %{event: event} do
+    executed_event =
+      event
+      |> AssemblyLine.update_assigns(%{
+        test_step_default: false
+      })
+      |> TestApp.Pipeline.TestPipeline.execute()
+
+    assert executed_event.assigns == %{
+             fired_init: true,
+             fired_before_step: :maybe,
+             fired_after_step: true,
+             next_step_default: "this was set",
+             fired_before_next_step: true,
+             fired_after_next_step: true,
+             fired_on_completion: true,
+             test_step_default: false,
+             another_test_step_default: true,
+             something_else: nil
+           }
+
+    assert executed_event.context == [
+             %{content: "response from the run\n some other response", role: "assistant"},
+             %{
+               content:
+                 "So far I have done: \n\nFired Init on Pipeline: true\nfired_before_step on Pipeline: maybe\nfired_after_step on Pipeline: true\ntest_step_default on Pipeline: false\nanother_test_step_default on Pipeline: true\nfired_before_next_step on Pipeline: true",
+               role: "user"
+             },
+             %{content: "response from the run\n some other response", role: "assistant"},
+             %{
+               content:
+                 "So far I have done: \n\nFired Init on Pipeline: true\nfired_before_step on Pipeline: maybe\ntest_step_default on Pipeline: false\nanother_test_step_default on Pipeline: true",
+               role: "user"
+             }
+           ]
+  end
 end

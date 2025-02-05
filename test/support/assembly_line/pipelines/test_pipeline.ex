@@ -4,7 +4,8 @@ defmodule TestApp.Pipeline.TestPipeline do
 
   def steps() do
     [
-      TestApp.Pipeline.TestPipeline.TestStep
+      TestApp.Pipeline.TestPipeline.TestStep,
+      TestApp.Pipeline.TestPipeline.NextTestStep
     ]
   end
 

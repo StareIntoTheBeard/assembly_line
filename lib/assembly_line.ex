@@ -5,7 +5,7 @@ defmodule AssemblyLine do
 
   def set_prerun_context(%AssemblyLine.Event{_private: %{is_arbitrary?: true}} = event) do
     {prompt, assigns} = event.step.module.compile_prompt(event)
-    
+
     message = event.step.adapter.wrap(event, "user", prompt)
     event = AssemblyLine.update_assigns(event, assigns)
     __MODULE__.update_context(event, message)
@@ -15,7 +15,7 @@ defmodule AssemblyLine do
     {prompt, assigns} =
       event
       |> event.step.module.compile_prompt()
-    
+
     event = AssemblyLine.update_assigns(event, assigns)
     message = event.step.adapter.wrap(event, "user", prompt)
     __MODULE__.update_context(event, message)
@@ -37,11 +37,14 @@ defmodule AssemblyLine do
   end
 
   def update_context(%AssemblyLine.Event{} = event, context_element)
+      when is_map_key(event.step.routing, :disable_conversation_recording) do
+    Map.put(event, :context, [context_element] ++ event.context)
+  end
+
+  def update_context(%AssemblyLine.Event{} = event, context_element)
       when is_map(context_element) do
-    if not Map.has_key?(event.step.routing, :debug) do
     NoSQL.Mongo.init()
     |> NoSQL.Mongo.insert_conversation(%{message: context_element, event: event})
-    end
 
     Map.put(event, :context, [context_element] ++ event.context)
   end
@@ -85,7 +88,7 @@ defmodule AssemblyLine do
     put_in(event, [:_private, :internal_thread_id], uuid)
   end
 
-  def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event, uuid)
+  def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event, _uuid)
       when not is_nil(id) do
     event
   end

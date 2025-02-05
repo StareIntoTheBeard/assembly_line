@@ -5,7 +5,7 @@ defmodule AssemblyLine.Assigner do
       Module.register_attribute(__MODULE__, :__prompt_assigns__, accumulate: true)
       Module.register_attribute(__MODULE__, :__prompt_outputs__, accumulate: true)
 
-      import AssemblyLine.Assigner, only: [attr: 2, return: 1]
+      import AssemblyLine.Assigner, only: [attr: 2, return: 1, return: 2]
       import Phoenix.Component, only: [sigil_H: 2]
     end
   end
@@ -16,7 +16,7 @@ defmodule AssemblyLine.Assigner do
     end
   end
 
-  defmacro return(name, opts \\ []) do
+  defmacro return(name, _opts \\ []) do
     quote do
       @__prompt_outputs__ {unquote(name)}
     end
@@ -29,6 +29,8 @@ defmodule AssemblyLine.Assigner do
 
       # Validation function to ensure required assigns exist
       def validate_assigns(assigns, debug) do
+        if debug, do: dbg(assigns)
+
         required_prompt_assigns =
           Enum.filter(@__prompt_assigns__, fn {_name, opts} ->
             Keyword.get(opts, :required, false)
@@ -41,8 +43,7 @@ defmodule AssemblyLine.Assigner do
           end)
 
         if missing_prompt_assigns != [] do
-          raise __MODULE__,
-                "Missing required assigns:  #{inspect(missing_prompt_assigns)} on step #{inspect(__MODULE__)}"
+          raise "Missing required assigns:  #{inspect(missing_prompt_assigns)} on step #{inspect(__MODULE__)}"
         end
 
         assigns =
@@ -65,7 +66,7 @@ defmodule AssemblyLine.Assigner do
             Map.put(acc, name, nil)
           end)
 
-        Map.merge(default_prompt_outputs, default_prompt_assigns)
+         Map.merge(default_prompt_outputs, default_prompt_assigns)
         |> Map.merge(assigns)
       end
     end

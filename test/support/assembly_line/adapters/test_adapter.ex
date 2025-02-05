@@ -2,8 +2,7 @@ defmodule AssemblyLine.Adapters.TestAdapter do
   use AssemblyLine.Adapter
 
   defstruct [
-    :agent_id,
-    :agent_alias
+    :disable_conversation_recording
   ]
 
   # implement call to model

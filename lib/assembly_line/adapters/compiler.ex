@@ -1,9 +1,8 @@
 defmodule AssemblyLine.Adapters.Compiler do
   use AssemblyLine.Adapter
-  @enforce_keys [:debug]
-  defstruct [
-    :debug
-  ]
+  # @enforce_keys [:disable_step_hooks, :disable_conversation_recording, :verbose]
+  defstruct [:disable_step_hooks,
+            :disable_conversation_recording]
 
   def run(event) do
     {:ok,
@@ -12,7 +11,7 @@ defmodule AssemblyLine.Adapters.Compiler do
      ], event}
   end
 
-  def deserialize(event, responses) do
+  def deserialize(_event, responses) do
     responses
   end
 

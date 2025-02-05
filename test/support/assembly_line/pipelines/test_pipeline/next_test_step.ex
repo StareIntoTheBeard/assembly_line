@@ -1,13 +1,14 @@
-defmodule TestApp.Pipeline.TestPipeline.TestStep do
+defmodule TestApp.Pipeline.TestPipeline.NextTestStep do
   use AssemblyLine.Step
 
-  attr(:fired_init, required: true)
-  attr(:test_step_default, default: true)
-  attr(:another_test_step_default, default: true)
+  attr(:fired_init, default: false)
+  attr(:test_step_default, default: :override_me)
+  attr(:fired_before_step, default: :override_me)
+  attr(:fired_after_step, default: :override_me)
+  attr(:next_step_default, default: "this was set")
 
-  return(:fired_after_step)
-  return(:fired_before_step)
-  return(:something_else)
+  return(:fired_before_next_step)
+  return(:fired_after_next_step)
 
   def prompt(assigns) do
     ~H"""
@@ -15,8 +16,10 @@ defmodule TestApp.Pipeline.TestPipeline.TestStep do
 
     Fired Init on Pipeline: {@fired_init}
     fired_before_step on Pipeline: {@fired_before_step}
+    fired_after_step on Pipeline: {@fired_after_step}
     test_step_default on Pipeline: {@test_step_default}
     another_test_step_default on Pipeline: {@another_test_step_default}
+    fired_before_next_step on Pipeline: {@fired_before_next_step}
     """
   end
 
@@ -27,7 +30,7 @@ defmodule TestApp.Pipeline.TestPipeline.TestStep do
     AssemblyLine.update_assigns(
       event,
       %{
-        fired_before_step: :maybe
+        fired_before_next_step: true
       }
     )
   end
@@ -36,7 +39,7 @@ defmodule TestApp.Pipeline.TestPipeline.TestStep do
     AssemblyLine.update_assigns(
       event,
       %{
-        fired_after_step: true
+        fired_after_next_step: true
       }
     )
     |> super()

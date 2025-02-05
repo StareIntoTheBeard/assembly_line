@@ -1,8 +1,8 @@
 defmodule AssemblyLine.Adapters.Debug do
   use AssemblyLine.Adapter
-  @enforce_keys [:debug]
+  @enforce_keys [:verbose]
   defstruct [
-    :debug
+    :verbose
   ]
 
   def run(event) do

@@ -10,11 +10,12 @@ defmodule AssemblyLine.Adapters.BedrockStability do
       AssemblyLine.get_next_user_prompt(event)
       |> Map.get(:content)
 
-    response = ExAws.Bedrock.invoke_model(event.step.module.model, %{
-      "prompt" => message,
-      "aspect_ratio" => "16:9"
-    })
-    |> ExAws.request!(service_override: :bedrock, region: "us-west-2")
+    response =
+      ExAws.Bedrock.invoke_model(event.step.module.model, %{
+        "prompt" => message,
+        "aspect_ratio" => "16:9"
+      })
+      |> ExAws.request!(service_override: :bedrock, region: "us-west-2")
 
     {:ok, response, event}
   end
@@ -31,7 +32,8 @@ defmodule AssemblyLine.Adapters.BedrockStability do
     |> ExAws.request!()
     |> get_in([:body, :location])
 
-    url = S3.File.get_url(%{filename: filename, s3_bucket: "stability-temp-images"})
+    {:ok, url} =
+      ExAws.S3.presigned_url(ExAws.Config.new(:s3), :get, "stability-temp-images", filename)
 
     [url]
   end

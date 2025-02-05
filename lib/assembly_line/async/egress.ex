@@ -9,7 +9,7 @@ defmodule AssemblyLine.Async.Egress do
     {:consumer, :the_state_does_not_matter, subscribe_to: [AssemblyLine.Async.Delegator]}
   end
 
-  def handle_events(events, _from, state) do
+  def handle_events(_events, _from, state) do
     # finishes with stuff?
     {:noreply, [], state}
   end

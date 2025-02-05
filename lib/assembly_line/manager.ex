@@ -86,14 +86,17 @@ defmodule AssemblyLine.Manager do
     step = %{
       step.init()
       | adapter: AssemblyLine.Adapters.Compiler,
-        routing: %AssemblyLine.Adapters.Compiler{debug: "debug"}
+        routing: %AssemblyLine.Adapters.Compiler{
+          disable_step_hooks: true,
+          disable_conversation_recording: true
+        }
     }
 
     runner(step, event)
   end
 
   def runner(%AssemblyLine.Step{module: module} = step, acc_event) when is_atom(module) do
-    dbg(step)
+    if Map.has_key?(step.routing, :verbose), do: dbg(step)
 
     acc_event = %{
       acc_event
@@ -128,7 +131,7 @@ defmodule AssemblyLine.Manager do
         AssemblyLine.Manager.circuit_break(acc_event, message)
 
       {:error, error, _acc} ->
-        dbg error
+        if Map.has_key?(step.routing, :verbose), do: dbg(error)
         {:halt, :error}
 
       other_result ->

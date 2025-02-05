@@ -23,8 +23,9 @@ defmodule AssemblyLine.Step do
 
   defmacro __using__(_opts) do
     quote do
-      @behaviour AssemblyLine.Step
       use AssemblyLine.Assigner
+
+      @behaviour AssemblyLine.Step
 
       def init,
         do:
@@ -44,16 +45,19 @@ defmodule AssemblyLine.Step do
       end
 
       def compile_prompt(event) do
-        debug = Map.has_key?(event.step.routing, :debug)
+        verbose = Map.has_key?(event.step.routing, :verbose)
 
-        assigns = event.assigns
-        |> event.step.module.validate_assigns(debug)
+        assigns =
+          event.assigns
+          |> event.step.module.validate_assigns(verbose)
 
-        prompt = assigns
-        |> prompt()
-        |> Phoenix.HTML.Safe.to_iodata()
-        |> IO.iodata_to_binary()
-        |> String.trim()
+        prompt =
+          assigns
+          |> prompt()
+          |> Phoenix.HTML.Safe.to_iodata()
+          |> IO.iodata_to_binary()
+          |> String.trim()
+
         {prompt, assigns}
       end
 
@@ -98,17 +102,13 @@ defmodule AssemblyLine.Step do
     end
   end
 
-  def step_guard(event, _) when is_map_key(event.step.routing, :debug) do
+  def step_guard(event, _) when is_map_key(event.step.routing, :disable_step_hooks) do
     event
   end
 
   def step_guard(event, step_key) do
     apply(event.step.module, step_key, [event])
-    |> step_return(event)
   end
-
-  defp step_return(%AssemblyLine.Event{} = reply, _), do: reply
-  defp step_return(_, %AssemblyLine.Event{} = event), do: event
 
   def set_is_arbitrary?(%AssemblyLine.Step{} = step, true) do
     put_in(step, [:_private, :is_arbitrary?], true)
