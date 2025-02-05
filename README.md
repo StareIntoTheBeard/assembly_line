@@ -10,7 +10,7 @@ by adding `assembly_line` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:assembly_line, "~> 0.1.0"}
+    {:assembly_line, "~> 1.0.0"}
   ]
 end
 ```
