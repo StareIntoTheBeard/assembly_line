@@ -46,10 +46,11 @@ defmodule AssemblyLine.Step do
 
       def compile_prompt(event) do
         verbose = Map.has_key?(event.step.routing, :verbose)
+        compiler = Map.has_key?(event.step.routing, :compiler)
 
         assigns =
           event.assigns
-          |> event.step.module.validate_assigns(verbose)
+          |> event.step.module.validate_assigns([verbose: verbose, compiler: compiler])
 
         prompt =
           assigns

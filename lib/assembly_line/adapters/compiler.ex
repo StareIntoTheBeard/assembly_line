@@ -2,7 +2,7 @@ defmodule AssemblyLine.Adapters.Compiler do
   use AssemblyLine.Adapter
   # @enforce_keys [:disable_step_hooks, :disable_conversation_recording, :verbose]
   defstruct [:disable_step_hooks,
-            :disable_conversation_recording]
+            :disable_conversation_recording, :compiler]
 
   def run(event) do
     {:ok,

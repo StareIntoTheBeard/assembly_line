@@ -28,8 +28,10 @@ defmodule AssemblyLine.Assigner do
       def __prompt_outputs__, do: @__prompt_outputs__ || []
 
       # Validation function to ensure required assigns exist
-      def validate_assigns(assigns, debug) do
-        if debug, do: dbg(assigns)
+      def validate_assigns(assigns, opts) do
+        verbose = Keyword.get(opts, :verbose, false)
+        compiler = Keyword.get(opts, :compiler, false)
+        if verbose, do: dbg(assigns)
 
         required_prompt_assigns =
           Enum.filter(@__prompt_assigns__, fn {_name, opts} ->
@@ -47,7 +49,7 @@ defmodule AssemblyLine.Assigner do
         end
 
         assigns =
-          if debug do
+          if compiler do
             assigns
           else
             Map.filter(assigns, fn {assign, value} -> not is_nil(value) end)
