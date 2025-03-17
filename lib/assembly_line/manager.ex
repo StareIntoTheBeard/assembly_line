@@ -16,7 +16,10 @@ defmodule AssemblyLine.Manager do
 
         event =
           Enum.reduce_while(step_list, event, fn step, acc ->
-            AssemblyLine.Manager.run_compiler(step, acc)
+            dbg step
+            if not(Map.has_key?(step.opts, :skip_precompile) && step.opts.skip_precompile) do
+              AssemblyLine.Manager.run_compiler(step, acc)
+            end
           end)
 
         verbose = Map.has_key?(event.step.opts, :verbose) && event.step.opts.verbose
@@ -89,6 +92,17 @@ defmodule AssemblyLine.Manager do
   def run_compiler(step, event) when is_atom(step) do
     step = %{
       step.init()
+      | adapter: AssemblyLine.Adapters.Compiler,
+        routing: AssemblyLine.Adapters.Compiler.init(),
+        opts: AssemblyLine.Adapters.Compiler.opts()
+    }
+
+    runner(step, event)
+  end
+
+  def run_compiler(step, event) when is_map(step) do
+    step = %{
+      step
       | adapter: AssemblyLine.Adapters.Compiler,
         routing: AssemblyLine.Adapters.Compiler.init(),
         opts: AssemblyLine.Adapters.Compiler.opts()

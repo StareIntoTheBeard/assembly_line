@@ -65,6 +65,19 @@ defmodule AssemblyLine.Step do
         {prompt, assigns}
       end
 
+      def compile_arbitrary_prompt(event) do
+        verbose = Map.has_key?(event.step.opts(), :verbose)
+        compiler = Map.has_key?(event.step.routing, :compiler)
+
+        assigns =
+          event.assigns
+          |> event.step.module.validate_assigns(verbose: verbose, compiler: compiler)
+
+        prompt = event.step.prompt
+
+        {prompt, assigns}
+      end
+
       def dial_agent, do: {}
       def response_format, do: "text"
       def adapter, do: AssemblyLine.PhoneBook.fetch_agent(__MODULE__.dial_agent()).adapter
