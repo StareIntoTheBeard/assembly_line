@@ -37,6 +37,8 @@ defmodule AssemblyLine.Manager do
 
         event =
           Enum.reduce_while(step_list, event, fn step, acc ->
+            dbg event.assembly_line
+            dbg step
             AssemblyLine.Manager.run(step, acc)
           end)
 
