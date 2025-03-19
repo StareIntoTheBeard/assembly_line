@@ -4,10 +4,10 @@ defmodule AssemblyLine do
   def init(:arbitrary_pipeline), do: init() |> AssemblyLine.set_is_arbitrary?(true)
 
   def set_prerun_context(%AssemblyLine.Event{_private: %{is_arbitrary?: true}} = event) do
-    {prompt, assigns} = event.step.module.compile_prompt(event)
+    {prompt, assigns} = event.step.module.compile_arbitrary_prompt(event)
 
-    message = event.step.adapter.wrap(event, "user", prompt)
     event = AssemblyLine.update_assigns(event, assigns)
+    message = event.step.adapter.wrap(event, "user", prompt)
     __MODULE__.update_context(event, message)
   end
 

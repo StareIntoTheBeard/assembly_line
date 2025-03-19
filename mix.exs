@@ -36,7 +36,10 @@ defmodule AssemblyLine.MixProject do
       {:dialyxir, "~> 1.4", runtime: false},
       {:uuid, "~> 1.1"},
       {:horde, "~> 0.9.0"},
-      {:phoenix_live_view, "~> 1.0"},
+      # {:assignable, path: "../assignable"},
+      {:assignable,
+       git: "git@github.com:microdose-ai-team/assignable.git",
+       ref: "c0ea58abccae1c4ed0340a917c777ce58f299621"},
       {:nosql,
        git: "git@github.com:microdose-ai-team/nosql_utils.git",
        ref: "81c630362b2e3295141ad72682de285357796398"}
