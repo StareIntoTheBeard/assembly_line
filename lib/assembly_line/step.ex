@@ -25,7 +25,8 @@ defmodule AssemblyLine.Step do
 
   defmacro __using__(_opts) do
     quote do
-      use AssemblyLine.Assigner
+      use Assignable
+      import Assignable.Helpers
 
       @behaviour AssemblyLine.Step
 
@@ -35,7 +36,7 @@ defmodule AssemblyLine.Step do
             adapter: adapter(),
             module: __MODULE__,
             routing: adapter().init(route()),
-            opts: opts(),
+            opts: opts()
           })
 
       def prompt(%{step: %{prompt: prompt}}) do
@@ -58,9 +59,8 @@ defmodule AssemblyLine.Step do
         prompt =
           assigns
           |> prompt()
-          |> Phoenix.HTML.Safe.to_iodata()
-          |> IO.iodata_to_binary()
           |> String.trim()
+          |> dbg
 
         {prompt, assigns}
       end
@@ -89,7 +89,7 @@ defmodule AssemblyLine.Step do
 
         case opts_present? do
           true ->
-            Map.merge(agent.opts, __MODULE__.adapter().opts()) 
+            Map.merge(agent.opts, __MODULE__.adapter().opts())
 
           false ->
             __MODULE__.adapter().opts()

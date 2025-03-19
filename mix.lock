@@ -1,6 +1,7 @@
 %{
   "accessible": {:hex, :accessible, "0.3.0", "932f6ade6ea839212fea1735ab4ffdc39a3843a622f2ea5d28f0ab41c14b4435", [:mix], [], "hexpm", "13a11b0611ab82f7b9098a88465b5674f729c02bd613216243c123c65f90f296"},
   "anthropix": {:hex, :anthropix, "0.3.1", "8dd454dacd6201b883fd8fdae21ebabca9b98cafead04c2034f4f63b0e0dc4c1", [:mix], [{:jason, "~> 1.4", [hex: :jason, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.1", [hex: :nimble_options, repo: "hexpm", optional: false]}, {:req, "~> 0.4", [hex: :req, repo: "hexpm", optional: false]}], "hexpm", "7396ba249768503b29137cfb3b9203105930d31cc43690b85575abf9e797cde9"},
+  "assignable": {:git, "git@github.com:microdose-ai-team/assignable.git", "c0ea58abccae1c4ed0340a917c777ce58f299621", [ref: "c0ea58abccae1c4ed0340a917c777ce58f299621"]},
   "castore": {:hex, :castore, "1.0.11", "4bbd584741601eb658007339ea730b082cc61f3554cf2e8f39bf693a11b49073", [:mix], [], "hexpm", "e03990b4db988df56262852f20de0f659871c35154691427a5047f4967a16a62"},
   "certifi": {:hex, :certifi, "2.12.0", "2d1cca2ec95f59643862af91f001478c9863c2ac9cb6e2f89780bfd8de987329", [:rebar3], [], "hexpm", "ee68d85df22e554040cdb4be100f33873ac6051387baf6a8f6ce82272340ff1c"},
   "combine": {:hex, :combine, "0.10.0", "eff8224eeb56498a2af13011d142c5e7997a80c8f5b97c499f84c841032e429f", [:mix], [], "hexpm", "1b1dbc1790073076580d0d1d64e42eae2366583e7aecd455d1215b0d16f2451b"},
