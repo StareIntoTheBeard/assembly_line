@@ -60,7 +60,6 @@ defmodule AssemblyLine.Step do
           assigns
           |> prompt()
           |> String.trim()
-          |> dbg
 
         {prompt, assigns}
       end

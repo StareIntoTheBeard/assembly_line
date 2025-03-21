@@ -39,7 +39,7 @@ defmodule AssemblyLine.MixProject do
       # {:assignable, path: "../assignable"},
       {:assignable,
        git: "git@github.com:microdose-ai-team/assignable.git",
-       ref: "c0ea58abccae1c4ed0340a917c777ce58f299621"},
+       ref: "827ef5319335d519e2ccfd10c84f2ec14f73674d"},
       {:nosql,
        git: "git@github.com:microdose-ai-team/nosql_utils.git",
        ref: "81c630362b2e3295141ad72682de285357796398"}
