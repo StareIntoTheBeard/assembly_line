@@ -38,6 +38,10 @@ defmodule AssemblyLine.Adapters.BedrockStability do
     [url]
   end
 
+  def deserialize(_event, message) do
+    message
+  end
+
   def wrap(%AssemblyLine.Event{} = _event, role, message),
     do: %{role: role, content: message}
 end
