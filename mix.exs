@@ -31,6 +31,8 @@ defmodule AssemblyLine.MixProject do
       {:ex_aws_bedrock, "~> 2.5.1"},
       {:ex_aws_s3, "~> 2.5"},
       {:gen_stage, "~> 1.2"},
+      {:phoenix_ecto, "~> 4.5"},
+      {:ecto_sql, "~> 3.10"},
       {:accessible, "~> 0.3.0"},
       {:anthropix, "~> 0.3"},
       {:dialyxir, "~> 1.4", runtime: false},
