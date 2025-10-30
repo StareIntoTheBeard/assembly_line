@@ -24,7 +24,7 @@ defmodule AssemblyLine.Adapters.Groq do
   end
 
   def deserialize(_event, thing) do
-    dbg thing
+    inspect thing
   end
 
   def wrap(%AssemblyLine.Event{} = _event, role, message), do: %{role: role, content: message}
