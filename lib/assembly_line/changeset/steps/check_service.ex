@@ -20,5 +20,5 @@ defmodule AssemblyLine.Changeset.Step.CheckService do
     event
   end
 
-  def dial_agent(), do: {:foundation, :bedrock_gpt120}
+  def dial_agent(), do: {:foundation, :groq_gpt120}
 end

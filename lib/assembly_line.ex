@@ -84,13 +84,13 @@ defmodule AssemblyLine do
 
   def set_internal_thread(event, uuid \\ UUID.uuid1())
 
-  def set_internal_thread(%AssemblyLine.Event{} = event, uuid) do
-    put_in(event, [:_private, :internal_thread_id], uuid)
-  end
-
   def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event, _uuid)
       when not is_nil(id) do
     event
+  end
+
+  def set_internal_thread(%AssemblyLine.Event{} = event, uuid) do
+    put_in(event, [:_private, :internal_thread_id], uuid)
   end
 
   def reset_internal_thread(%AssemblyLine.Event{} = event, id) do

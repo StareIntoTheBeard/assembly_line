@@ -25,7 +25,7 @@ defmodule AssemblyLine.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:openai, "~> 0.5.4"},
+      {:openai, "~> 0.6.2"},
       {:openai_ex, git: "https://github.com/microdose-ai-team/openai_ex.git"},
       {:ex_aws, git: "https://github.com/microdose-ai-team/ex_aws.git", override: true},
       {:ex_aws_bedrock, "~> 2.5.1"},
@@ -44,7 +44,7 @@ defmodule AssemblyLine.MixProject do
        ref: "827ef5319335d519e2ccfd10c84f2ec14f73674d"},
       {:nosql,
        git: "git@github.com:microdose-ai-team/nosql_utils.git",
-       ref: "81c630362b2e3295141ad72682de285357796398"}
+       ref: "8fa07f41d3d257e95cfb9c9b268a0288da2b8ef5"}
       # {:nosql, path: "../nosql_utils"}
     ]
   end
