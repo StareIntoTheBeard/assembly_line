@@ -15,7 +15,8 @@ defmodule AssemblyLine.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {AssemblyLine.Application, []},
     ]
   end
 
@@ -44,7 +45,12 @@ defmodule AssemblyLine.MixProject do
        ref: "827ef5319335d519e2ccfd10c84f2ec14f73674d"},
       {:nosql,
        git: "git@github.com:microdose-ai-team/nosql_utils.git",
-       ref: "8fa07f41d3d257e95cfb9c9b268a0288da2b8ef5"}
+       ref: "8fa07f41d3d257e95cfb9c9b268a0288da2b8ef5"},
+      {:groq, "~> 0.1.0",
+       [
+         git: "https://github.com/microdose-ai-team/groq-elixir.git",
+         ref: "601ca1868967c3d7699083b14fc7ed47961c7926"
+       ]}
       # {:nosql, path: "../nosql_utils"}
     ]
   end

@@ -12,19 +12,20 @@ defmodule AssemblyLine.Adapters.OpenAIImage do
 
     {:ok, resp} =
       OpenAI.image_generations(
-        model: event.step.module().model,
+       [ model: event.step.module().model,
         prompt: message,
-        size: "1536x1024"
+        size: "1536x1024"],
+        %OpenAI.Config{http_options: [recv_timeout: 120_000]}
       )
 
     {:ok, resp, event}
   end
 
-  def deserialize(_event, %{data: [%{"url" => url}]}) do
+  def deserialize(_event, %{data: [%{"b64_json" => b64_image}]}) do
     temp_directory = System.tmp_dir()
     filename = "#{UUID.uuid4()}.png"
     written_path = "#{temp_directory}/#{filename}"
-    {:ok, %{body: content}} = HTTPoison.get(url)
+    {:ok, content} = Base.decode64(b64_image)
     :ok = File.write!(written_path, content)
 
     ExAws.S3.Upload.stream_file(written_path)
