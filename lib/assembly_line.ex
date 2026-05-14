@@ -62,9 +62,10 @@ defmodule AssemblyLine do
     end
   end
 
+  # Only fills in a thread when none exists. Use set_internal_thread/2 with an explicit id to override.
   def update_internal_thread(event) do
     if is_nil(AssemblyLine.get_internal_thread(event)) do
-      __MODULE__.set_internal_thread(event)
+      __MODULE__.set_internal_thread(event, UUID.uuid1())
     else
       event
     end
@@ -82,13 +83,15 @@ defmodule AssemblyLine do
     get_in(event, [:_private, :remote_thread_id])
   end
 
-  def set_internal_thread(event, uuid \\ UUID.uuid1())
-
-  def set_internal_thread(%AssemblyLine.Event{_private: %{internal_thread_id: id}} = event, _uuid)
-      when not is_nil(id) do
-    event
+  # Generates a fresh uuid when called with no second arg
+  def set_internal_thread(%AssemblyLine.Event{} = event) do
+    put_in(event, [:_private, :internal_thread_id], UUID.uuid1())
   end
 
+  # Nil is a no-op so callers passing nil don't wipe an existing thread
+  def set_internal_thread(%AssemblyLine.Event{} = event, nil), do: event
+
+  # Explicit id always overrides
   def set_internal_thread(%AssemblyLine.Event{} = event, uuid) do
     put_in(event, [:_private, :internal_thread_id], uuid)
   end

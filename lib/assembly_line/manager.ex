@@ -29,7 +29,7 @@ defmodule AssemblyLine.Manager do
 
       def execute(%AssemblyLine.Event{} = event) do
         %{assigns: assigns} = compile(event)
-        event = %{event | assigns: assigns, assembly_line: __MODULE__}
+        event = %{event | assigns: assigns, required_assigns: assigns, assembly_line: __MODULE__}
         step_list = AssemblyLine.get_step_list(event)
 
         event = %{event | step_list: step_list}

@@ -11,7 +11,7 @@ defmodule AssemblyLine.Adapters.Groq do
       |> Map.get(:content)
 
     response = Groq.ChatCompletion.create(%{
-      "model" => event.step.module.model,
+      "model" => event.step.module.model(),
       "messages" => [wrap(event, "user", message)]
     })
 

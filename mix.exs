@@ -42,15 +42,15 @@ defmodule AssemblyLine.MixProject do
       # {:assignable, path: "../assignable"},
       {:assignable,
        git: "git@github.com:microdose-ai-team/assignable.git",
-       ref: "827ef5319335d519e2ccfd10c84f2ec14f73674d"},
+       ref: "11ddec3f5dce0ea7ef26558bce7b9893863e591b"},
       {:nosql,
        git: "git@github.com:microdose-ai-team/nosql_utils.git",
-       ref: "8fa07f41d3d257e95cfb9c9b268a0288da2b8ef5"},
+       ref: "2e052fc08748113d14058817c45e1e3edcfe478a"},
       {:groq, "~> 0.1.0",
        [
          git: "https://github.com/microdose-ai-team/groq-elixir.git",
          ref: "601ca1868967c3d7699083b14fc7ed47961c7926"
-       ]}
+       ]},
       # {:nosql, path: "../nosql_utils"}
     ]
   end

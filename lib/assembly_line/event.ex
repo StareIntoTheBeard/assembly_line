@@ -16,6 +16,7 @@ defmodule AssemblyLine.Event do
     step: %AssemblyLine.Step{},
     context: [],
     assigns: %{},
+    required_assigns: %{},
     break_word: "AI HALT REQUESTED"
   ]
 end

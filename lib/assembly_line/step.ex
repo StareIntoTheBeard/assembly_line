@@ -25,7 +25,7 @@ defmodule AssemblyLine.Step do
 
   defmacro __using__(_opts) do
     quote do
-      use Assignable
+      use Assignable, [:as_struct]
       import Assignable.Helpers
 
       @behaviour AssemblyLine.Step
