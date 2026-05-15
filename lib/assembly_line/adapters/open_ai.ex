@@ -14,9 +14,7 @@ defmodule AssemblyLine.Adapters.OpenAI do
       OpenAI.chat_completion(
         model: event.step.module().model,
         response_format: %{type: event.step.module().response_format()},
-        messages: [wrap(event, "user", message)],
-        temperature: 0.2,
-        max_tokens: 4096
+        messages: [wrap(event, "user", message)]
       )
       |> IO.inspect()
 

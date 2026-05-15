@@ -20,7 +20,7 @@ config :openai,
   # find it at https://platform.openai.com/account/org-settings under "Organization ID"
   organization_key: Application.get_env(:assembly_line, :openai_organization_key, nil),
   # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
-  http_options: [recv_timeout: :infinity],
+  http_options: [recv_timeout: 120_000, timeout: 90_000],
   # optional, useful if you want to do local integration tests using Bypass or similar
   # (https://github.com/PSPDFKit-labs/bypass), do not use it for production code,
   # but only in your test config!
