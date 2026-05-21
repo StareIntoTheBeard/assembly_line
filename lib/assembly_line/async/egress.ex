@@ -1,4 +1,12 @@
 defmodule AssemblyLine.Async.Egress do
+  @moduledoc """
+  Aggregates batch completion signals from async pipeline children. When the
+  last child finishes, dispatches a side effect based on the batch's :kind:
+    - :articles          → redirect to blog articles page + summary message
+    - :images_scatter    → broadcast {asset_id, insert_after} pairs to editor
+    - :images_standalone → redirect to first asset's show page
+  """
+
   use GenStage
 
   def start_link(_opts) do
@@ -19,14 +27,16 @@ defmodule AssemblyLine.Async.Egress do
 
   def handle_cast({:register_batch, batch_id, total, opts}, state) do
     batch = %{
+      kind: opts[:kind] || :articles,
       total: total,
       completed: 0,
       failed: 0,
+      results: [],
       thread_owner_id: opts[:thread_owner_id],
       thread_id: opts[:thread_id],
       organization_id: opts[:organization_id],
       blog_id: opts[:blog_id],
-      redirect_url: opts[:redirect_url] || "/blogs/#{opts[:blog_id]}/articles"
+      article_id: opts[:article_id]
     }
 
     {:noreply, [], put_in(state, [:batches, batch_id], batch)}
@@ -49,23 +59,24 @@ defmodule AssemblyLine.Async.Egress do
     end
   end
 
-  def handle_events(_events, _from, state) do
-    {:noreply, [], state}
+  def handle_events(_events, _from, state), do: {:noreply, [], state}
+
+  defp tally(batch, :ok) do
+    %{batch | completed: batch.completed + 1, results: [:ok | batch.results]}
   end
 
-  defp tally(batch, :ok), do: %{batch | completed: batch.completed + 1}
-  defp tally(batch, {:error, _}), do: %{batch | failed: batch.failed + 1}
+  defp tally(batch, {:ok, value}) do
+    %{batch | completed: batch.completed + 1, results: [{:ok, value} | batch.results]}
+  end
 
-  defp broadcast_completion(batch) do
-    message = build_message(batch)
+  defp tally(batch, {:error, reason}) do
+    %{batch | failed: batch.failed + 1, results: [{:error, reason} | batch.results]}
+  end
 
-    Memories.reconcile_new_memory(
-      message,
-      :assistant,
-      batch.thread_owner_id,
-      batch.thread_id,
-      batch.organization_id
-    )
+  # --- Articles ---
+  defp broadcast_completion(%{kind: :articles, blog_id: blog_id} = batch) do
+    message = build_articles_message(batch)
+    write_to_chat(batch, message)
 
     Phoenix.PubSub.broadcast(
       Bullhorn.PubSub,
@@ -73,16 +84,83 @@ defmodule AssemblyLine.Async.Egress do
       {:redirect_to_route,
        %{
          flash_message: message,
-         redirect_url: batch.redirect_url
+         redirect_url: "/blogs/#{blog_id}/articles"
        }}
     )
   end
 
-  defp build_message(%{total: total, completed: total, failed: 0}) do
+  # --- Image scatter (article editor) ---
+  defp broadcast_completion(%{kind: :images_scatter} = batch) do
+    items =
+      batch.results
+      |> Enum.reverse()
+      |> Enum.flat_map(fn
+        {:ok, %{asset_id: id, insert_after: snippet}} ->
+          [%{asset_id: id, insert_after: snippet}]
+
+        _ ->
+          []
+      end)
+
+    message = build_images_message(batch)
+    write_to_chat(batch, message)
+
+    Phoenix.PubSub.broadcast(
+      Bullhorn.PubSub,
+      "chat:#{batch.thread_owner_id}:#{batch.thread_id}",
+      {:insert_images_into_editor, items}
+    )
+  end
+
+  # --- Standalone image generation ---
+  defp broadcast_completion(%{kind: :images_standalone} = batch) do
+    first_asset_id =
+      batch.results
+      |> Enum.reverse()
+      |> Enum.find_value(fn
+        {:ok, %{asset_id: id}} -> id
+        _ -> nil
+      end)
+
+    message = build_images_message(batch)
+    write_to_chat(batch, message)
+
+    if first_asset_id do
+      Phoenix.PubSub.broadcast(
+        Bullhorn.PubSub,
+        "chat:#{batch.thread_owner_id}:#{batch.thread_id}",
+        {:redirect_to_route,
+         %{
+           flash_message: message,
+           redirect_url: "/assets/#{first_asset_id}"
+         }}
+      )
+    end
+  end
+
+  defp write_to_chat(batch, message) do
+    Memories.reconcile_new_memory(
+      message,
+      :assistant,
+      batch.thread_owner_id,
+      batch.thread_id,
+      batch.organization_id
+    )
+  end
+
+  defp build_articles_message(%{total: total, completed: total, failed: 0}) do
     "All #{total} articles are ready."
   end
 
-  defp build_message(%{completed: completed, failed: failed}) do
+  defp build_articles_message(%{completed: completed, failed: failed}) do
     "#{completed} articles created (#{failed} failed)."
+  end
+
+  defp build_images_message(%{total: total, completed: total, failed: 0}) do
+    "All #{total} images are ready."
+  end
+
+  defp build_images_message(%{completed: completed, failed: failed}) do
+    "#{completed} images created (#{failed} failed)."
   end
 end
