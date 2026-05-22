@@ -30,4 +30,5 @@ config :openai,
 # config :groq, api_key: S, hackney_pool_timeout: 20_000
 config :groq,
   api_key: Application.get_env(:assembly_line, :groq_api_key, nil),
-  hackney_pool_timeout: 20_000
+  hackney_pool_timeout: 20_000,
+  max_tokens: 32_000
