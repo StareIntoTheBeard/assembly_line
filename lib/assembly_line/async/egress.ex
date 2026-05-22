@@ -91,6 +91,8 @@ defmodule AssemblyLine.Async.Egress do
 
   # --- Image scatter (article editor) ---
   defp broadcast_completion(%{kind: :images_scatter} = batch) do
+    require Logger
+
     items =
       batch.results
       |> Enum.reverse()
@@ -105,10 +107,47 @@ defmodule AssemblyLine.Async.Egress do
     message = build_images_message(batch)
     write_to_chat(batch, message)
 
+    # Persist once here so every LV in the shared chat thread gets a
+    # consistent, already-saved state rather than each racing to save the
+    # same content. LVs receive the broadcast and only update their view.
+    {new_content, tagged_resources} =
+      try do
+        article = Bullhorn.Articles.get_article!(batch.article_id)
+        new_content = Bullhorn.Articles.ImageInjector.inject(article.content || "", items)
+        tagged_resources = Bullhorn.Articles.ImageInjector.tagged_resources(items)
+
+        if article.content != new_content do
+          Bullhorn.Articles.Article.create_revision(article, %{content: new_content})
+        end
+
+        case Bullhorn.Articles.update_article_with_possible_redirect(
+               article,
+               %{content: new_content}
+             ) do
+          {:ok, _updated} -> :ok
+          other -> Logger.error("[egress :images_scatter] save failed: #{inspect(other)}")
+        end
+
+        {new_content, tagged_resources}
+      rescue
+        e ->
+          Logger.error(
+            "[egress :images_scatter] persist raised: " <>
+              Exception.format(:error, e, __STACKTRACE__)
+          )
+
+          {nil, []}
+      end
+
     Phoenix.PubSub.broadcast(
       Bullhorn.PubSub,
       "chat:#{batch.thread_owner_id}:#{batch.thread_id}",
-      {:insert_images_into_editor, items}
+      {:insert_images_into_editor,
+       %{
+         article_id: batch.article_id,
+         content: new_content,
+         tagged_resources: tagged_resources
+       }}
     )
   end
 
