@@ -18,15 +18,19 @@ end
 ## Current Feature Set
 * Dynamic multi-step planning 
 * Intent detection with routing to tool calls
-* Prompt requirement tracking and persistence
+* Job/prompt requirement tracking and persistence
+* Parallel job execution via GenStage
 * In-memory schema backed conversation context storage, distributable via Horde
+* Sharable, user-aware agent powered chat sessions
 * Predefined pipelines with predefined steps
 * Arbitrary pipelines with predefined steps
-* Multi-model, multi-cloud support
+* Multi-model, multi-cloud support, extendable by adapter
   * OpenAI API
     * ChatGPT
     * Dall-E
     * OpenAI Assistants
+  * Claude
+  * Groq
   * Bedrock Foundation Models
     * Claude
     * Stability AI
