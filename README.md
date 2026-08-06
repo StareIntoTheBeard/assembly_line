@@ -1,6 +1,6 @@
 # AssemblyLine
 
-The current AI infrastructure that underlies microdose.ai
+I kinda like rewrote langchain in elixir 
 
 ## Installation
 
