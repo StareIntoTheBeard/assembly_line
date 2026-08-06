@@ -16,6 +16,10 @@ end
 ```
 
 ## Current Feature Set
+* Dynamic multi-step planning 
+* Intent detection with routing to tool calls
+* Prompt requirement tracking and persistence
+* In-memory schema backed conversation context storage, distributable via Horde
 * Predefined pipelines with predefined steps
 * Arbitrary pipelines with predefined steps
 * Multi-model, multi-cloud support
